@@ -3,24 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuesioner Budidaya Ikan Tematik</title>
+    <title>Kuesioner SPPG</title>
     <meta name="description" content="Kuesioner Monitoring Program Budidaya Ikan Tematik">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <link rel="icon" type="image/png" href="logo-kkp.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <!-- Login Screen -->
     <div class="login-overlay" id="loginOverlay">
+        
+        <div class="ocean-waves">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave3"></div>
+            <div class="wave wave4"></div>
+        </div>
+        
+        <div class="bubbles">
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+        </div>
+        
+        <div class="seaweed-container">
+            <div class="seaweed seaweed1">🌿</div>
+            <div class="seaweed seaweed2">🌿</div>
+            <div class="seaweed seaweed3">🌿</div>
+            <div class="seaweed seaweed4">🌿</div>
+            <div class="seaweed seaweed5">🌿</div>
+        </div>
+        
+        <div class="coral-container">
+            <div class="coral coral1">🪸</div>
+            <div class="coral coral2">🍍</div>
+            <div class="coral coral3">🪸</div>
+        </div>
+        
+        <div class="fish-container">
+            <div class="fish fish1">🐟</div>
+            <div class="fish fish2">🐠</div>
+            <div class="fish fish3">✋😌🤚</div>
+            <div class="fish fish4"></div>
+            <div class="fish fish5">🚓</div>
+            <div class="fish fish6">🐠</div>
+            <div class="fish fish7">🐡</div>
+            <div class="fish fish8">🧜‍♂️</div>
+            <div class="fish fish9">🐟</div>
+            <div class="fish fish10">🛵</div>
+        </div>
         <div class="login-container">
             <div class="login-card">
                 <div class="login-header">
-                    <div class="login-logo">🐟</div>
-                    <h1>Kuesioner Budidaya Ikan</h1>
+                    <div class="login-logo"><img src="logo-kkp.png" alt="Logo KKP" style="width: 80px; height: 80px;"></div>
+                    <h1>Kuesioner SPPG</h1>
                     <p>Silakan login untuk mengakses dashboard</p>
                 </div>
                 <form id="loginForm" class="login-form">
@@ -47,12 +116,12 @@
 
     <header class="mobile-header">
         <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-        <h1 class="mobile-title">🐟 Kuesioner Budidaya</h1>
+        <h1 class="mobile-title"><img src="logo-kkp.png" alt="Logo" style="width: 28px; height: 28px; vertical-align: middle; margin-right: 8px;">Kuesioner Budidaya</h1>
     </header>
 
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="logo"><span class="logo-icon">🐟</span><span class="logo-text">Kuesioner<br>Budidaya</span></div>
+            <div class="logo"><span class="logo-icon"><img src="logo-kkp.png" alt="Logo KKP" style="width: 40px; height: 40px;"></span><span class="logo-text">Kuesioner SPPG</span></div>
         </div>
         <ul class="nav-menu">
             <li class="nav-item"><a href="#dashboard" class="nav-link active" data-page="dashboard"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a></li>
@@ -79,7 +148,7 @@
     <main class="main-content">
         <!-- Dashboard -->
         <section class="page active" id="dashboard">
-            <div class="page-header"><h1>Dashboard Analisis</h1><p class="subtitle">Visualisasi data kuesioner budidaya ikan tematik</p></div>
+            <div class="page-header"><h1>Dashboard Analisis</h1><p class="subtitle">Visualisasi data kuesioner budidaya ikan tematik untuk SPPG</p></div>
             <div class="stats-grid">
                 <div class="stat-card gradient-1"><div class="stat-icon">📝</div><div class="stat-info"><span class="stat-value" id="totalKuesioner">0</span><span class="stat-label">Total Kuesioner</span></div></div>
                 <div class="stat-card gradient-2"><div class="stat-icon">🏢</div><div class="stat-info"><span class="stat-value" id="totalKoperasi">0</span><span class="stat-label">Koperasi Terdata</span></div></div>
@@ -132,7 +201,7 @@
                 <div class="map-card">
                     <div class="map-header">
                         <h3>🗺️ Peta Lokasi KDMP</h3>
-                        <p>Sebaran titik lokasi Kelompok Digitalisasi Mina Pembudidaya yang terdata</p>
+                        <p>Sebaran titik lokasi Koperasi Desa Merah Putih yang terdata</p>
                     </div>
                     <div class="map-container" id="kdmpMap"></div>
                     <div class="map-legend">
@@ -147,7 +216,7 @@
 
         <!-- Kuesioner KDMP (All 4 sections) -->
         <section class="page" id="kuesioner">
-            <div class="page-header"><h1>Kuesioner KDMP</h1><p class="subtitle">Input data lengkap kuesioner penerima bantuan KDMP</p></div>
+            <div class="page-header"><h1>Kuesioner KDMP</h1><p class="subtitle">Input data lengkap kuesioner KDMP</p></div>
             
             <!-- Data Verifikator & Responden (Shared) -->
             <div class="verifikator-card modern-form">
@@ -318,6 +387,29 @@
                 </div>
             </div>
 
+            <!-- Import Excel Section -->
+            <div class="import-section">
+                <div class="import-card">
+                    <div class="import-header">
+                        <h3>📥 Import Data Excel</h3>
+                        <p>Upload file Excel (.xlsx/.xls) untuk import data kuesioner KDMP secara massal</p>
+                    </div>
+                    <div class="import-actions">
+                        <label class="import-btn">
+                            <input type="file" id="importKdmpExcel" accept=".xlsx,.xls" onchange="importKDMPFromExcel(event)" hidden>
+                            <span class="import-icon">📊</span>
+                            <span class="import-text">
+                                <strong>Pilih File Excel</strong>
+                                <small>Format: .xlsx atau .xls</small>
+                            </span>
+                        </label>
+                        <button class="template-btn" onclick="downloadKDMPTemplate()">
+                            <span>📋</span> Download Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Document Cards -->
             <div class="document-cards-container">
                 <h3>📄 Data Kuesioner Tersimpan</h3>
@@ -446,6 +538,29 @@
                         </div>
                         <button type="submit" class="btn-submit"><span class="btn-icon">💾</span>Simpan Bagian D</button>
                     </form>
+                </div>
+            </div>
+
+            <!-- Import Excel Section -->
+            <div class="import-section">
+                <div class="import-card">
+                    <div class="import-header">
+                        <h3>📥 Import Data Excel</h3>
+                        <p>Upload file Excel (.xlsx/.xls) untuk import data kuesioner Masyarakat secara massal</p>
+                    </div>
+                    <div class="import-actions">
+                        <label class="import-btn">
+                            <input type="file" id="importMasyExcel" accept=".xlsx,.xls" onchange="importMasyarakatFromExcel(event)" hidden>
+                            <span class="import-icon">📊</span>
+                            <span class="import-text">
+                                <strong>Pilih File Excel</strong>
+                                <small>Format: .xlsx atau .xls</small>
+                            </span>
+                        </label>
+                        <button class="template-btn" onclick="downloadMasyarakatTemplate()">
+                            <span>📋</span> Download Template
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -617,6 +732,29 @@
                         </div>
                         <button type="submit" class="btn-submit"><span class="btn-icon">💾</span>Simpan Bagian D</button>
                     </form>
+                </div>
+            </div>
+
+            <!-- Import Excel Section -->
+            <div class="import-section">
+                <div class="import-card">
+                    <div class="import-header">
+                        <h3>📥 Import Data Excel</h3>
+                        <p>Upload file Excel (.xlsx/.xls) untuk import data kuesioner SPPG secara massal</p>
+                    </div>
+                    <div class="import-actions">
+                        <label class="import-btn">
+                            <input type="file" id="importSppgExcel" accept=".xlsx,.xls" onchange="importSPPGFromExcel(event)" hidden>
+                            <span class="import-icon">📊</span>
+                            <span class="import-text">
+                                <strong>Pilih File Excel</strong>
+                                <small>Format: .xlsx atau .xls</small>
+                            </span>
+                        </label>
+                        <button class="template-btn" onclick="downloadSPPGTemplate()">
+                            <span>📋</span> Download Template
+                        </button>
+                    </div>
                 </div>
             </div>
 

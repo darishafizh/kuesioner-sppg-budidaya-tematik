@@ -481,10 +481,9 @@ function initializeMap() {
         scrollWheelZoom: true
     });
     
-    // Add tile layer (using CartoDB dark theme for dark mode)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
+    // Add tile layer (using OpenStreetMap light theme)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
     }).addTo(kdmpMap);
     
@@ -1307,4 +1306,349 @@ function downloadExcelAsCSV(wb) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
+}
+
+// ===== Excel Import Functions =====
+
+// Helper function to parse Excel file
+function parseExcelFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheet];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+                resolve(jsonData);
+            } catch (err) {
+                reject(err);
+            }
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+// Helper to normalize column names
+function normalizeKey(key) {
+    return key.toString().toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+}
+
+// Map Excel row to form data with flexible column matching
+function mapExcelRow(row, mappings) {
+    const result = {};
+    const normalizedRow = {};
+    
+    // Normalize all keys in the row
+    Object.keys(row).forEach(key => {
+        normalizedRow[normalizeKey(key)] = row[key];
+    });
+    
+    // Map each field
+    Object.keys(mappings).forEach(fieldName => {
+        const possibleKeys = mappings[fieldName];
+        let value = '';
+        
+        for (const key of possibleKeys) {
+            const normalizedKey = normalizeKey(key);
+            if (normalizedRow[normalizedKey] !== undefined && normalizedRow[normalizedKey] !== '') {
+                value = normalizedRow[normalizedKey];
+                break;
+            }
+        }
+        
+        result[fieldName] = value;
+    });
+    
+    return result;
+}
+
+// Import KDMP from Excel
+async function importKDMPFromExcel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    try {
+        showToast('⏳ Memproses file Excel...');
+        const rows = await parseExcelFile(file);
+        
+        if (rows.length === 0) {
+            showToast('⚠️ File Excel kosong!');
+            return;
+        }
+        
+        // Field mapping: formFieldName: [possible excel column names]
+        const mappings = {
+            verifikator: ['verifikator', 'nama_verifikator', 'surveyor'],
+            responden: ['responden', 'nama_responden', 'name'],
+            tempat_tanggal: ['tempat_tanggal', 'tanggal', 'waktu', 'date'],
+            jk: ['jenis_kelamin', 'jk', 'gender'],
+            umur: ['umur', 'usia', 'age'],
+            pendidikan: ['pendidikan', 'education'],
+            pekerjaan: ['pekerjaan', 'jabatan', 'job'],
+            alamat: ['alamat', 'address', 'alamat_ktp'],
+            koperasi: ['koperasi', 'nama_koperasi', 'nama_kdmp'],
+            badan_hukum: ['badan_hukum', 'no_badan_hukum', 'ahu'],
+            desa: ['desa', 'kelurahan', 'village'],
+            kecamatan: ['kecamatan', 'district'],
+            kabkota: ['kabupaten', 'kabkota', 'kota', 'city', 'kabupaten_kota'],
+            provinsi: ['provinsi', 'province'],
+            luas: ['luas', 'luas_lahan', 'area'],
+            paket: ['paket', 'jumlah_paket'],
+            komoditas: ['komoditas', 'jenis_ikan', 'commodity'],
+            koordinat: ['koordinat', 'koordinat_gps', 'gps', 'coordinate', 'lat_long'],
+            catatan: ['catatan', 'notes', 'keterangan'],
+            rekomendasi: ['rekomendasi', 'recommendation']
+        };
+        
+        let imported = 0;
+        rows.forEach(row => {
+            const mapped = mapExcelRow(row, mappings);
+            
+            // Skip empty rows
+            if (!mapped.koperasi && !mapped.responden) return;
+            
+            const data = {
+                verifikator: mapped.verifikator || 'Import Excel',
+                tempat_tanggal: mapped.tempat_tanggal || new Date().toLocaleDateString('id-ID'),
+                responden: mapped.responden || '',
+                jk: mapped.jk || 'Laki-laki',
+                umur: parseInt(mapped.umur) || 0,
+                pendidikan: mapped.pendidikan || 'SMA',
+                pekerjaan: mapped.pekerjaan || '',
+                alamat: mapped.alamat || '',
+                koperasi: mapped.koperasi || '',
+                badan_hukum: mapped.badan_hukum || '',
+                desa: mapped.desa || '',
+                kecamatan: mapped.kecamatan || '',
+                kabkota: mapped.kabkota || '',
+                provinsi: mapped.provinsi || 'Aceh',
+                luas: parseInt(mapped.luas) || 0,
+                paket: parseInt(mapped.paket) || 1,
+                komoditas: mapped.komoditas || 'Lele',
+                koordinat: mapped.koordinat || '',
+                kriteria: [false, false, false, false, false, false, false, false],
+                kbli: '',
+                hari_pelatihan: 0,
+                hambatan: [],
+                catatan: mapped.catatan || '',
+                rekomendasi: mapped.rekomendasi || ''
+            };
+            
+            addData('formA', data);
+            imported++;
+        });
+        
+        event.target.value = '';
+        renderKdmpCards();
+        updateDashboard();
+        updateMapMarkers();
+        showToast(`✅ Berhasil import ${imported} data KDMP!`);
+        
+    } catch (err) {
+        console.error('Import error:', err);
+        showToast('❌ Gagal import file Excel!');
+        event.target.value = '';
+    }
+}
+
+// Import Masyarakat from Excel
+async function importMasyarakatFromExcel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    try {
+        showToast('⏳ Memproses file Excel...');
+        const rows = await parseExcelFile(file);
+        
+        if (rows.length === 0) {
+            showToast('⚠️ File Excel kosong!');
+            return;
+        }
+        
+        const mappings = {
+            verifikator: ['verifikator', 'nama_verifikator', 'surveyor'],
+            responden: ['responden', 'nama_responden', 'name'],
+            tempat_tanggal: ['tempat_tanggal', 'tanggal', 'waktu', 'date'],
+            koordinat: ['koordinat', 'gps', 'coordinate'],
+            jk: ['jenis_kelamin', 'jk', 'gender'],
+            umur: ['umur', 'usia', 'age'],
+            pendidikan: ['pendidikan', 'education'],
+            pekerjaan: ['pekerjaan', 'jabatan', 'job'],
+            alamat: ['alamat', 'address'],
+            sesuai_kebutuhan: ['sesuai_kebutuhan', 'kesesuaian', 'sesuai'],
+            tidak_sesuai: ['tidak_sesuai', 'item_tidak_sesuai'],
+            senang: ['senang', 'perasaan', 'feeling'],
+            alasan: ['alasan', 'reason'],
+            harapan: ['harapan', 'hope', 'expectation'],
+            saran: ['saran', 'masukan', 'suggestion']
+        };
+        
+        let imported = 0;
+        rows.forEach(row => {
+            const mapped = mapExcelRow(row, mappings);
+            
+            if (!mapped.responden) return;
+            
+            const data = {
+                verifikator: mapped.verifikator || 'Import Excel',
+                tempat_tanggal: mapped.tempat_tanggal || new Date().toLocaleDateString('id-ID'),
+                responden: mapped.responden || '',
+                koordinat: mapped.koordinat || '',
+                jk: mapped.jk || 'Laki-laki',
+                umur: parseInt(mapped.umur) || 0,
+                pendidikan: mapped.pendidikan || 'SMA',
+                pekerjaan: mapped.pekerjaan || '',
+                alamat: mapped.alamat || '',
+                sesuai_kebutuhan: mapped.sesuai_kebutuhan || 'Ya, sesuai',
+                tidak_sesuai: mapped.tidak_sesuai || '',
+                senang: mapped.senang || 'Senang',
+                alasan: mapped.alasan || '',
+                harapan: mapped.harapan || '',
+                saran: mapped.saran || ''
+            };
+            
+            addData('masyA', data);
+            imported++;
+        });
+        
+        event.target.value = '';
+        renderMasyCards();
+        showToast(`✅ Berhasil import ${imported} data Masyarakat!`);
+        
+    } catch (err) {
+        console.error('Import error:', err);
+        showToast('❌ Gagal import file Excel!');
+        event.target.value = '';
+    }
+}
+
+// Import SPPG from Excel
+async function importSPPGFromExcel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    try {
+        showToast('⏳ Memproses file Excel...');
+        const rows = await parseExcelFile(file);
+        
+        if (rows.length === 0) {
+            showToast('⚠️ File Excel kosong!');
+            return;
+        }
+        
+        const mappings = {
+            verifikator: ['verifikator', 'nama_verifikator', 'surveyor'],
+            responden: ['responden', 'nama_responden', 'name'],
+            tempat_tanggal: ['tempat_tanggal', 'tanggal', 'waktu', 'date'],
+            koordinat: ['koordinat', 'gps', 'coordinate'],
+            jk: ['jenis_kelamin', 'jk', 'gender'],
+            umur: ['umur', 'usia', 'age'],
+            pendidikan: ['pendidikan', 'education'],
+            pekerjaan: ['pekerjaan', 'jabatan', 'job'],
+            alamat: ['alamat', 'address'],
+            nama_sppg: ['nama_sppg', 'sppg', 'name_sppg'],
+            kabkota: ['kabupaten', 'kabkota', 'kota', 'city'],
+            jml_sekolah: ['jml_sekolah', 'jumlah_sekolah', 'sekolah'],
+            jml_siswa: ['jml_siswa', 'jumlah_siswa', 'siswa', 'student'],
+            porsi_harian: ['porsi_harian', 'porsi_per_hari'],
+            porsi_bulanan: ['porsi_bulanan', 'porsi_per_bulan'],
+            kebutuhan_lele: ['kebutuhan_lele', 'lele'],
+            kebutuhan_nila: ['kebutuhan_nila', 'nila'],
+            kebutuhan_lain: ['kebutuhan_lain', 'ikan_lain'],
+            frekuensi: ['frekuensi', 'frekuensi_menu'],
+            anggaran_porsi: ['anggaran_porsi', 'anggaran', 'budget'],
+            terpenuhi: ['terpenuhi', 'kebutuhan_terpenuhi'],
+            kekurangan: ['kekurangan', 'jumlah_kekurangan']
+        };
+        
+        let imported = 0;
+        rows.forEach(row => {
+            const mapped = mapExcelRow(row, mappings);
+            
+            if (!mapped.nama_sppg && !mapped.responden) return;
+            
+            const data = {
+                verifikator: mapped.verifikator || 'Import Excel',
+                tempat_tanggal: mapped.tempat_tanggal || new Date().toLocaleDateString('id-ID'),
+                responden: mapped.responden || '',
+                koordinat: mapped.koordinat || '',
+                jk: mapped.jk || 'Laki-laki',
+                umur: parseInt(mapped.umur) || 0,
+                pendidikan: mapped.pendidikan || 'SMA',
+                pekerjaan: mapped.pekerjaan || '',
+                alamat: mapped.alamat || '',
+                nama_sppg: mapped.nama_sppg || '',
+                kabkota: mapped.kabkota || '',
+                jml_sekolah: parseInt(mapped.jml_sekolah) || 0,
+                jml_siswa: parseInt(mapped.jml_siswa) || 0,
+                porsi_harian: parseInt(mapped.porsi_harian) || 0,
+                porsi_bulanan: parseInt(mapped.porsi_bulanan) || 0,
+                kebutuhan_lele: parseInt(mapped.kebutuhan_lele) || 0,
+                kebutuhan_nila: parseInt(mapped.kebutuhan_nila) || 0,
+                kebutuhan_lain: parseInt(mapped.kebutuhan_lain) || 0,
+                frekuensi: parseInt(mapped.frekuensi) || 0,
+                anggaran_porsi: parseInt(mapped.anggaran_porsi) || 0,
+                terpenuhi: mapped.terpenuhi || 'Belum',
+                kekurangan: parseInt(mapped.kekurangan) || 0
+            };
+            
+            addData('sppgA', data);
+            imported++;
+        });
+        
+        event.target.value = '';
+        renderSppgCards();
+        showToast(`✅ Berhasil import ${imported} data SPPG!`);
+        
+    } catch (err) {
+        console.error('Import error:', err);
+        showToast('❌ Gagal import file Excel!');
+        event.target.value = '';
+    }
+}
+
+// Download Template Functions
+function downloadKDMPTemplate() {
+    const headers = ['Verifikator', 'Responden', 'Tanggal', 'Jenis_Kelamin', 'Umur', 'Pendidikan', 'Pekerjaan', 'Alamat', 'Koperasi', 'Badan_Hukum', 'Desa', 'Kecamatan', 'Kabupaten', 'Provinsi', 'Luas', 'Paket', 'Komoditas', 'Koordinat', 'Catatan', 'Rekomendasi'];
+    const sampleRow = ['Nama Verifikator', 'Nama Responden', '2024-12-22', 'Laki-laki', '45', 'S1', 'Ketua Koperasi', 'Jl. Contoh No.1', 'Koperasi ABC', 'AHU-123456', 'Desa Contoh', 'Kec. Contoh', 'Kab. Contoh', 'Aceh', '1000', '1', 'Lele', '5.5, 95.3', 'Catatan contoh', 'Rekomendasi contoh'];
+    downloadTemplateCSV('Template_KDMP', headers, sampleRow);
+}
+
+function downloadMasyarakatTemplate() {
+    const headers = ['Verifikator', 'Responden', 'Tanggal', 'Koordinat', 'Jenis_Kelamin', 'Umur', 'Pendidikan', 'Pekerjaan', 'Alamat', 'Sesuai_Kebutuhan', 'Tidak_Sesuai', 'Senang', 'Alasan', 'Harapan', 'Saran'];
+    const sampleRow = ['Nama Verifikator', 'Nama Responden', '2024-12-22', '5.5, 95.3', 'Perempuan', '40', 'SMA', 'Ibu Rumah Tangga', 'Jl. Contoh No.1', 'Ya, sesuai', '', 'Senang', 'Membuka lapangan kerja', 'Produksi meningkat', 'Libatkan warga'];
+    downloadTemplateCSV('Template_Masyarakat', headers, sampleRow);
+}
+
+function downloadSPPGTemplate() {
+    const headers = ['Verifikator', 'Responden', 'Tanggal', 'Koordinat', 'Jenis_Kelamin', 'Umur', 'Pendidikan', 'Pekerjaan', 'Alamat', 'Nama_SPPG', 'Kabupaten', 'Jml_Sekolah', 'Jml_Siswa', 'Porsi_Harian', 'Porsi_Bulanan', 'Kebutuhan_Lele', 'Kebutuhan_Nila', 'Kebutuhan_Lain', 'Frekuensi', 'Anggaran_Porsi', 'Terpenuhi', 'Kekurangan'];
+    const sampleRow = ['Nama Verifikator', 'Kepala SPPG', '2024-12-22', '5.5, 95.3', 'Laki-laki', '50', 'S1', 'Kepala SPPG', 'Jl. SPPG No.1', 'SPPG Kota ABC', 'Kota ABC', '25', '5000', '4500', '99000', '1500', '1000', '500', '3', '18000', 'Belum', '800'];
+    downloadTemplateCSV('Template_SPPG', headers, sampleRow);
+}
+
+function downloadTemplateCSV(filename, headers, sampleRow) {
+    const csv = [
+        headers.join(','),
+        sampleRow.map(cell => {
+            if (cell.includes(',') || cell.includes('"')) {
+                return '"' + cell.replace(/"/g, '""') + '"';
+            }
+            return cell;
+        }).join(',')
+    ].join('\n');
+    
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast('✅ Template berhasil diunduh!');
 }
