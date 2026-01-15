@@ -1,47 +1,87 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="login-header">
+        <img src="{{ asset('logo-kkp.png') }}" alt="Logo KKP" class="login-logo">
+        <h1 class="login-title">Survey Budidaya Tematik</h1>
+        <p class="login-subtitle">Kementerian Kelautan dan Perikanan</p>
+    </div>
 
-    <form method="POST" action="{{ route('login') }}">
+    <!-- Session Status -->
+    <x-auth-session-status class="alert alert-info mb-3" :status="session('status')" />
+
+    <form method="POST" action="{{ route('login') }}" class="login-form">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!-- Username -->
+        <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <div class="input-group">
+                <span class="input-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </span>
+                <input 
+                    id="username" 
+                    name="username" 
+                    type="text" 
+                    value="{{ old('username') }}"
+                    class="form-control" 
+                    placeholder="Masukkan username anda"
+                    required 
+                    autofocus 
+                    autocomplete="username"
+                >
+            </div>
+            <x-input-error :messages="$errors->get('username')" class="text-danger text-sm mt-1" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+                <span class="input-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </span>
+                <input 
+                    id="password" 
+                    name="password" 
+                    type="password" 
+                    class="form-control" 
+                    placeholder="Masukkan password"
+                    required 
+                    autocomplete="current-password"
+                >
+            </div>
+            <x-input-error :messages="$errors->get('password')" class="text-danger text-sm mt-1" />
         </div>
 
         <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+        <div class="flex items-center justify-between mb-4">
+            <label class="form-check" style="background:none; padding:0;">
+                <input id="remember_me" type="checkbox" name="remember" class="form-check-input">
+                <span class="form-check-label">Ingat saya</span>
             </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
+            
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                <a class="text-sm text-primary font-medium" href="{{ route('password.request') }}">
+                    Lupa password?
                 </a>
             @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
         </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary" style="width:100%;">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Masuk
+        </button>
     </form>
+
+    <!-- Register Link -->
+    <div class="login-footer">
+        <p>Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a></p>
+    </div>
 </x-guest-layout>

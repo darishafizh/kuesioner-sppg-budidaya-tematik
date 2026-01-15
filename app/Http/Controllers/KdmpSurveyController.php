@@ -1,0 +1,145 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\KdmpSurvey;
+use App\Models\Province;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class KdmpSurveyController extends Controller
+{
+    /**
+     * Display a listing of KDMP surveys.
+     */
+    public function index(Request $request)
+    {
+        $query = KdmpSurvey::with('user')->latest();
+        
+        // Filter by search
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_koperasi', 'like', "%{$search}%")
+                  ->orWhere('responden', 'like', "%{$search}%")
+                  ->orWhere('kabupaten', 'like', "%{$search}%");
+            });
+        }
+        
+        // Filter by province
+        if ($provinsi = $request->get('provinsi')) {
+            $query->where('provinsi', $provinsi);
+        }
+        
+        // Filter by commodity
+        if ($komoditas = $request->get('komoditas')) {
+            $query->where('komoditas', $komoditas);
+        }
+        
+        $surveys = $query->paginate(10);
+        $provinces = Province::orderBy('name')->pluck('name', 'id');
+        
+        return view('kdmp.index', compact('surveys', 'provinces'));
+    }
+
+    /**
+     * Show the form for creating a new survey.
+     */
+    public function create()
+    {
+        $provinces = Province::orderBy('name')->get();
+        return view('kdmp.create', compact('provinces'));
+    }
+
+    /**
+     * Store a newly created survey.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'verifikator' => 'nullable|string|max:255',
+            'responden' => 'nullable|string|max:255',
+            'nama_koperasi' => 'required|string|max:255',
+            'kabupaten' => 'required|string|max:255',
+            'provinsi' => 'required|string|max:255',
+            'komoditas' => 'nullable|in:Lele,Nila',
+            // Add more validation as needed
+        ]);
+        
+        $validated['user_id'] = Auth::id();
+        
+        // Process checkbox arrays
+        $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
+        $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
+        $validated['tujuan_penjualan'] = $request->input('tujuan_penjualan', []);
+        
+        $survey = KdmpSurvey::create($validated);
+        
+        return redirect()
+            ->route('kdmp.show', $survey)
+            ->with('success', 'Kuesioner KDMP berhasil disimpan!');
+    }
+
+    /**
+     * Display the specified survey.
+     */
+    public function show(KdmpSurvey $kdmp)
+    {
+        return view('kdmp.show', compact('kdmp'));
+    }
+
+    /**
+     * Show the form for editing the survey.
+     */
+    public function edit(KdmpSurvey $kdmp)
+    {
+        $provinces = Province::orderBy('name')->get();
+        return view('kdmp.edit', compact('kdmp', 'provinces'));
+    }
+
+    /**
+     * Update the specified survey.
+     */
+    public function update(Request $request, KdmpSurvey $kdmp)
+    {
+        $validated = $request->validate([
+            'verifikator' => 'nullable|string|max:255',
+            'responden' => 'nullable|string|max:255',
+            'nama_koperasi' => 'required|string|max:255',
+            'kabupaten' => 'required|string|max:255',
+            'provinsi' => 'required|string|max:255',
+            'komoditas' => 'nullable|in:Lele,Nila',
+        ]);
+        
+        // Process checkbox arrays
+        $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
+        $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
+        $validated['tujuan_penjualan'] = $request->input('tujuan_penjualan', []);
+        
+        $kdmp->update($validated);
+        
+        return redirect()
+            ->route('kdmp.show', $kdmp)
+            ->with('success', 'Kuesioner KDMP berhasil diperbarui!');
+    }
+
+    /**
+     * Remove the specified survey.
+     */
+    public function destroy(KdmpSurvey $kdmp)
+    {
+        $kdmp->delete();
+        
+        return redirect()
+            ->route('kdmp.index')
+            ->with('success', 'Kuesioner KDMP berhasil dihapus!');
+    }
+
+    /**
+     * Export survey to PDF
+     */
+    public function exportPdf(KdmpSurvey $kdmp)
+    {
+        // TODO: Implement PDF export
+        return view('kdmp.pdf', compact('kdmp'));
+    }
+}
