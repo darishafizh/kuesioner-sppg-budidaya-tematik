@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Breadcrumb -->
+<x-breadcrumb :items="[
+    ['label' => 'KDMP', 'url' => route('kdmp.index')],
+    ['label' => 'Tambah Kuesioner', 'url' => '#']
+]" />
+
 <!-- Page Header -->
 <div class="page-header">
     <div class="flex items-center">
@@ -107,33 +113,6 @@
                 <div class="form-group">
                     <label class="form-label">Koordinat Lokasi</label>
                     <input type="text" name="koordinat" placeholder="-6.123, 106.456" class="form-control">
-                </div>
-            </div>
-
-            <!-- Kriteria Administrasi -->
-            <div class="border-t mt-4 pt-4">
-                <label class="form-label mb-3">Kriteria Administrasi</label>
-                <div class="grid grid-cols-2">
-                    <label class="form-check">
-                        <input type="checkbox" name="krit_badan_hukum_kbli" value="1" class="form-check-input">
-                        <span class="form-check-label">Badan hukum KDMP dengan KBLI 03221</span>
-                    </label>
-                    <label class="form-check">
-                        <input type="checkbox" name="krit_ekusuka" value="1" class="form-check-input">
-                        <span class="form-check-label">e-Kusuka terdaftar di satudata.kkp.go.id</span>
-                    </label>
-                    <label class="form-check">
-                        <input type="checkbox" name="krit_jkn_aktif" value="1" class="form-check-input">
-                        <span class="form-check-label">Pengurus/anggota aktif JKN</span>
-                    </label>
-                    <label class="form-check">
-                        <input type="checkbox" name="krit_proposal" value="1" class="form-check-input">
-                        <span class="form-check-label">Permohonan, proposal & rencana usaha disampaikan</span>
-                    </label>
-                    <label class="form-check">
-                        <input type="checkbox" name="krit_pelatihan" value="1" class="form-check-input">
-                        <span class="form-check-label">Sudah mendapat pelatihan teknis budidaya</span>
-                    </label>
                 </div>
             </div>
 

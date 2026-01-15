@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Breadcrumb -->
+<x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('dashboard')]]" />
+
 <!-- Page Header -->
 <div class="page-header">
     <div class="page-header-content">
@@ -218,12 +221,10 @@
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Alpine.js for dropdown -->
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // KKP Color Palette
     const colors = {
         teal: '#0891B2',
         cyan: '#06B6D4',
@@ -233,92 +234,41 @@ document.addEventListener('DOMContentLoaded', function() {
         red: '#EF4444'
     };
 
-    // Komoditas Chart
     const komoditasData = @json($komoditasData);
     new Chart(document.getElementById('komoditasChart'), {
         type: 'doughnut',
         data: {
             labels: Object.keys(komoditasData),
-            datasets: [{
-                data: Object.values(komoditasData),
-                backgroundColor: [colors.teal, colors.green, colors.amber, colors.red],
-            }]
+            datasets: [{ data: Object.values(komoditasData), backgroundColor: [colors.teal, colors.green, colors.amber, colors.red] }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 
-    // Progress Chart
     const progresData = @json($progresData);
     new Chart(document.getElementById('progresChart'), {
         type: 'bar',
-        data: {
-            labels: Object.keys(progresData),
-            datasets: [{
-                label: 'Progres (%)',
-                data: Object.values(progresData),
-                backgroundColor: colors.teal,
-                borderRadius: 8,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, max: 100 } }
-        }
+        data: { labels: Object.keys(progresData), datasets: [{ label: 'Progres (%)', data: Object.values(progresData), backgroundColor: colors.teal, borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
     });
 
-    // Hambatan Chart
     const hambatanData = @json($hambatanCounts);
     new Chart(document.getElementById('hambatanChart'), {
         type: 'bar',
-        data: {
-            labels: Object.keys(hambatanData),
-            datasets: [{
-                label: 'Jumlah',
-                data: Object.values(hambatanData),
-                backgroundColor: colors.amber,
-                borderRadius: 8,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y'
-        }
+        data: { labels: Object.keys(hambatanData), datasets: [{ label: 'Jumlah', data: Object.values(hambatanData), backgroundColor: colors.amber, borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
     });
 
-    // Instalasi Chart
     const instalasiData = @json($instalasiData);
     new Chart(document.getElementById('instalasiChart'), {
         type: 'radar',
-        data: {
-            labels: Object.keys(instalasiData),
-            datasets: [{
-                label: 'Terpasang',
-                data: Object.values(instalasiData),
-                backgroundColor: 'rgba(8, 145, 178, 0.2)',
-                borderColor: colors.teal,
-                pointBackgroundColor: colors.teal,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-        }
+        data: { labels: Object.keys(instalasiData), datasets: [{ label: 'Terpasang', data: Object.values(instalasiData), backgroundColor: 'rgba(8, 145, 178, 0.2)', borderColor: colors.teal, pointBackgroundColor: colors.teal }] },
+        options: { responsive: true, maintainAspectRatio: false }
     });
 
-    // Map
     const mapLocations = @json($mapLocations);
     if (mapLocations.length > 0) {
         const map = L.map('kdmpMap').setView([-2.5, 118], 5);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         mapLocations.forEach(loc => {
             L.marker([parseFloat(loc.lat), parseFloat(loc.lng)])
                 .bindPopup(`<b style="color: #0891B2;">${loc.name}</b><br>${loc.location}<br>Komoditas: ${loc.commodity || '-'}`)
