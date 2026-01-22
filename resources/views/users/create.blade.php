@@ -36,15 +36,11 @@
         </div>
         <div class="section-body">
             <div class="grid grid-cols-2">
-                <div class="form-group">
-                    <label class="form-label">Nama Lengkap <span class="required">*</span></label>
-                    <input type="text" name="name" value="{{ old('name') }}" required class="form-control" placeholder="Masukkan nama lengkap">
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label">Username <span class="required">*</span></label>
+                    <input type="text" name="name" value="{{ old('name') }}" required class="form-control" placeholder="Masukkan username">
+                    <small class="text-muted">Username akan digunakan untuk login</small>
                     @error('name')<span class="text-danger text-sm">{{ $message }}</span>@enderror
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email <span class="required">*</span></label>
-                    <input type="email" name="email" value="{{ old('email') }}" required class="form-control" placeholder="Masukkan email">
-                    @error('email')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password <span class="required">*</span></label>

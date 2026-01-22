@@ -19,10 +19,9 @@ class AdminUserSeeder extends Seeder
 
         // Create Admin user
         User::updateOrCreate(
-            ['email' => 'admin@admin.com'],
+            ['name' => 'admin'],
             [
                 'name' => 'admin',
-                'email' => 'admin@admin.com',
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
             ]
@@ -30,10 +29,9 @@ class AdminUserSeeder extends Seeder
 
         // Create Verifikator user
         User::updateOrCreate(
-            ['email' => 'verifikator@kkp.go.id'],
+            ['name' => 'verifikator'],
             [
                 'name' => 'verifikator',
-                'email' => 'verifikator@kkp.go.id',
                 'password' => Hash::make('verifikator123'),
                 'role' => 'verifikator',
             ]

@@ -11,7 +11,7 @@
     <div class="page-header-content">
         <div>
             <h1 class="page-title">Kuesioner SPPG</h1>
-            <p class="page-subtitle">Data Survei Sekolah Perikanan</p>
+            <p class="page-subtitle">Data Survei SPPG</p>
         </div>
         <a href="{{ route('sppg.create') }}" class="btn btn-warning">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">

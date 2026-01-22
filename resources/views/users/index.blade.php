@@ -48,8 +48,6 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama</th>
-                    <th>Email</th>
                     <th>Username</th>
                     <th>Role</th>
                     <th>Dibuat</th>
@@ -62,14 +60,14 @@
                     <td>{{ $index + 1 }}</td>
                     <td>
                         <div class="flex items-center gap-3">
-                            <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891B2,#06B6D4);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.875rem;">
+                            <div style="width:36px;height:36px;background:linear-gradient(135deg,{{ $user->role == 'admin' ? '#0D2137,#164E63' : '#0891B2,#06B6D4' }});border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.875rem;">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
-                            <div class="font-medium">{{ $user->name }}</div>
+                            <div>
+                                <div class="font-medium">{{ $user->name }}</div>
+                            </div>
                         </div>
                     </td>
-                    <td>{{ $user->email }}</td>
-                    <td><code style="background:#f1f5f9;padding:2px 8px;border-radius:4px;">{{ $user->name }}</code></td>
                     <td>
                         @if($user->role === 'admin')
                         <span class="badge badge-navy">
@@ -125,7 +123,7 @@ $(document).ready(function() {
             zeroRecords: "Tidak ada data yang cocok",
             paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
         },
-        pageLength: 10, order: [[0, 'asc']], columnDefs: [{ orderable: false, targets: [6] }]
+        pageLength: 10, order: [[0, 'asc']], columnDefs: [{ orderable: false, targets: [4] }]
     });
 });
 </script>
