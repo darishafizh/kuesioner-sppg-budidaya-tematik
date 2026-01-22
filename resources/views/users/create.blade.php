@@ -1,25 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Breadcrumb -->
-<x-breadcrumb :items="[
-    ['label' => 'Manajemen User', 'url' => route('users.index')],
-    ['label' => 'Tambah User', 'url' => '#']
-]" />
-
-<!-- Page Header -->
-<div class="page-header">
-    <div class="flex items-center">
-        <a href="{{ route('users.index') }}" class="back-btn">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-        </a>
-        <div>
-            <h1 class="page-title">Tambah User</h1>
-            <p class="page-subtitle">Buat akun pengguna baru</p>
-        </div>
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Tambah User</h1>
+        <p class="page-subtitle">Buat akun pengguna baru</p>
     </div>
+    <x-breadcrumb :items="[
+        ['label' => 'Users', 'url' => route('users.index')],
+        ['label' => 'Tambah', 'url' => '#']
+    ]" />
 </div>
 
 <form action="{{ route('users.store') }}" method="POST">
@@ -77,7 +68,7 @@
 
     <div class="form-actions">
         <a href="{{ route('users.index') }}" class="btn btn-outline">Batal</a>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-success">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>

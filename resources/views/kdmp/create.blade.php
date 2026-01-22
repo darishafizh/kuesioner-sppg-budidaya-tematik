@@ -1,25 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Breadcrumb -->
-<x-breadcrumb :items="[
-    ['label' => 'KDMP', 'url' => route('kdmp.index')],
-    ['label' => 'Tambah Kuesioner', 'url' => '#']
-]" />
-
-<!-- Page Header -->
-<div class="page-header">
-    <div class="flex items-center">
-        <a href="{{ route('kdmp.index') }}" class="back-btn">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-        </a>
-        <div>
-            <h1 class="page-title">Tambah Kuesioner KDMP</h1>
-            <p class="page-subtitle">Input data Koperasi Desa Merah Putih</p>
-        </div>
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Kuesioner KDMP</h1>
+        <p class="page-subtitle">Kolam Demonstrasi Mina Pedesaan - Bioflok</p>
     </div>
+    <x-breadcrumb :items="[
+        ['label' => 'KDMP', 'url' => route('kdmp.index')],
+        ['label' => 'Tambah', 'url' => '#']
+    ]" />
 </div>
 
 <form action="{{ route('kdmp.store') }}" method="POST">
@@ -28,177 +19,319 @@
     <!-- Data Verifikator & Responden -->
     <div class="section-card">
         <div class="section-header">
-            <div class="section-icon teal">
+            <div class="section-icon success">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
             </div>
             <h3 class="section-title">Data Verifikator & Responden</h3>
         </div>
         <div class="section-body">
-            <div class="grid grid-cols-2">
+            <div class="grid grid-cols-3">
                 <div class="form-group">
-                    <label class="form-label">Nama Verifikator</label>
-                    <input type="text" name="verifikator" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nama Responden</label>
-                    <input type="text" name="responden" class="form-control">
+                    <label class="form-label">Nama Verifikator/Interviewer/Pewawancara</label>
+                    <input type="text" name="verifikator" class="form-control" placeholder="Nama verifikator">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Tempat</label>
-                    <input type="text" name="tempat" class="form-control">
+                    <input type="text" name="tempat" class="form-control" placeholder="Tempat wawancara">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Tanggal</label>
                     <input type="date" name="tanggal" class="form-control">
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Jam</label>
+                    <input type="time" name="jam" class="form-control">
+                </div>
+            </div>
+
+            <div class="border-t mt-4 pt-4">
+                <label class="form-label font-semibold mb-3">Data Responden</label>
+                <div class="grid grid-cols-4">
+                    <div class="form-group">
+                        <label class="form-label">Nama Responden</label>
+                        <input type="text" name="responden" class="form-control" placeholder="Nama responden">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jenis Kelamin</label>
+                        <select name="jenis_kelamin" class="form-control form-select">
+                            <option value="">Pilih</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Umur (tahun)</label>
+                        <input type="number" name="umur" min="1" class="form-control" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pendidikan Terakhir</label>
+                        <select name="pendidikan" class="form-control form-select">
+                            <option value="">Pilih</option>
+                            @foreach(['SD', 'SMP', 'SMA', 'D3', 'S1', 'S2', 'S3'] as $p)
+                            <option value="{{ $p }}">{{ $p }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pekerjaan/Jabatan</label>
+                        <input type="text" name="pekerjaan" class="form-control" placeholder="Pekerjaan">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">Alamat sesuai KTP</label>
+                        <input type="text" name="alamat" class="form-control" placeholder="Alamat lengkap">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Bagian A: Identitas Lembaga -->
+    <!-- Identitas Koperasi KDMP -->
+    <div class="section-card">
+        <div class="section-header">
+            <div class="section-icon teal">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+            </div>
+            <h3 class="section-title">Identitas Koperasi KDMP</h3>
+        </div>
+        <div class="section-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width:50px">No</th>
+                            <th>Data</th>
+                            <th style="min-width:350px">Jawaban</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center">1</td>
+                            <td>Nama Koperasi KDMP<br><small class="text-muted">Nomor Badan Hukum</small></td>
+                            <td>
+                                <input type="text" name="nama_koperasi" class="form-control mb-2" placeholder="Nama Koperasi">
+                                <input type="text" name="nomor_badan_hukum" class="form-control" placeholder="Nomor Badan Hukum">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">2</td>
+                            <td>Lokasi<br><small class="text-muted">(Desa/Kelurahan, Kecamatan, Kab/Kota, Provinsi)</small></td>
+                            <td>
+                                <div class="grid grid-cols-2" style="gap:0.5rem;">
+                                    <input type="text" name="desa" class="form-control" placeholder="Desa/Kelurahan">
+                                    <input type="text" name="kecamatan" class="form-control" placeholder="Kecamatan">
+                                    <input type="text" name="kabupaten" class="form-control" placeholder="Kabupaten/Kota">
+                                    <input type="text" name="provinsi" class="form-control" placeholder="Provinsi">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">3</td>
+                            <td>Luas lahan per paket bioflok<br><small class="text-muted">(minimal 858 m²/paket)</small></td>
+                            <td>
+                                <div class="flex" style="align-items:center; gap:0.5rem;">
+                                    <input type="number" name="luas_lahan" min="0" class="form-control" placeholder="0">
+                                    <span>m²</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">4</td>
+                            <td>Jumlah paket bantuan</td>
+                            <td>
+                                <div class="flex" style="align-items:center; gap:0.5rem;">
+                                    <input type="number" name="jumlah_paket" min="0" class="form-control" placeholder="0">
+                                    <span>paket</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">5</td>
+                            <td>Komoditas</td>
+                            <td>
+                                <div class="flex gap-4">
+                                    <label class="form-check">
+                                        <input type="checkbox" name="komoditas[]" value="Ikan Lele" class="form-check-input">
+                                        <span class="form-check-label">Ikan Lele</span>
+                                    </label>
+                                    <label class="form-check">
+                                        <input type="checkbox" name="komoditas[]" value="Ikan Nila" class="form-check-input">
+                                        <span class="form-check-label">Ikan Nila</span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">6</td>
+                            <td>Lokasi (koordinat)</td>
+                            <td>
+                                <input type="text" name="koordinat" class="form-control" placeholder="-6.123, 106.456">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bagian A: Administrasi -->
     <div class="section-card">
         <div class="section-header">
             <div class="section-icon navy">A</div>
-            <h3 class="section-title">Identitas Lembaga & Lokasi</h3>
+            <h3 class="section-title">Administrasi</h3>
         </div>
         <div class="section-body">
-            <div class="grid grid-cols-2">
-                <div class="form-group">
-                    <label class="form-label">Nama Koperasi KDMP <span class="required">*</span></label>
-                    <input type="text" name="nama_koperasi" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nomor Badan Hukum</label>
-                    <input type="text" name="nomor_badan_hukum" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Desa/Kelurahan</label>
-                    <input type="text" name="desa" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kecamatan</label>
-                    <input type="text" name="kecamatan" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kabupaten/Kota <span class="required">*</span></label>
-                    <input type="text" name="kabupaten" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Provinsi <span class="required">*</span></label>
-                    <select name="provinsi" required class="form-control form-select">
-                        <option value="">Pilih Provinsi</option>
-                        @foreach($provinces as $province)
-                        <option value="{{ $province->name }}">{{ $province->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Luas Lahan (m²)</label>
-                    <input type="number" name="luas_lahan" min="0" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Jumlah Paket Bantuan</label>
-                    <input type="number" name="jumlah_paket" min="0" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Komoditas</label>
-                    <select name="komoditas" class="form-control form-select">
-                        <option value="">Pilih Komoditas</option>
-                        <option value="Lele">Ikan Lele</option>
-                        <option value="Nila">Ikan Nila</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Koordinat Lokasi</label>
-                    <input type="text" name="koordinat" placeholder="-6.123, 106.456" class="form-control">
-                </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width:50px">No</th>
+                            <th>Kriteria (dari Formulir 6, Lampiran Verifikasi)</th>
+                            <th style="width:130px">Ya/Tidak</th>
+                            <th style="min-width:250px">Keterangan/Kondisi Existing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center">1</td>
+                            <td>Badan hukum KDMP dengan KBLI 03221 Pembesaran Ikan Air Tawar & Anggota Budidaya Ikan Aktif</td>
+                            <td>
+                                <select name="krit_badan_hukum_kbli" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="kbli_number" class="form-control mb-1" placeholder="No. Badan Hukum">
+                                <input type="text" name="kbli_keterangan" class="form-control" placeholder="KBLI:">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">2</td>
+                            <td>e-Kusuka terdaftar di satudata.kkp.go.id</td>
+                            <td>
+                                <select name="krit_ekusuka" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="krit_ekusuka_ket" class="form-control" placeholder="Keterangan..."></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">3</td>
+                            <td>Salah satu pengurus/anggota aktif JKN</td>
+                            <td>
+                                <select name="krit_jkn_aktif" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="krit_jkn_ket" class="form-control" placeholder="Keterangan..."></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">4</td>
+                            <td>Permohonan, proposal & rencana usaha disampaikan</td>
+                            <td>
+                                <select name="krit_proposal" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="krit_proposal_ket" class="form-control" placeholder="Keterangan..."></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">5</td>
+                            <td>Pernyataan Kesanggupan operasional & perawatan</td>
+                            <td>
+                                <select name="krit_kesanggupan" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="krit_kesanggupan_ket" class="form-control" placeholder="Keterangan..."></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">6</td>
+                            <td>Belum pernah menerima bantuan serupa dari KKP selama satu tahun</td>
+                            <td>
+                                <select name="krit_belum_bantuan" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="krit_belum_bantuan_ket" class="form-control" placeholder="Keterangan..."></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">7</td>
+                            <td>Sudah mendapatkan pelatihan teknis budidaya ikan air tawar</td>
+                            <td>
+                                <select name="krit_pelatihan" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="flex" style="align-items:center; gap:0.5rem;">
+                                    <span>Berapa lama?</span>
+                                    <input type="number" name="pelatihan_hari" min="0" class="form-control" style="width:80px" placeholder="0">
+                                    <span>hari</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">8</td>
+                            <td>Apakah koperasi mengelola pakan, pemasaran dan pencatatan produksi anggota bersama?</td>
+                            <td>
+                                <select name="krit_kelola_koperasi" class="form-control form-select">
+                                    <option value="">Pilih</option>
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="krit_kelola_ket" class="form-control" placeholder="Keterangan..."></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">9</td>
+                            <td>Hambatan utama koperasi saat ini</td>
+                            <td colspan="2">
+                                <div class="flex gap-3 flex-wrap">
+                                    @foreach(['SDM', 'Modal', 'Kepercayaan anggota', 'Pasar', 'Tata kelola'] as $hambatan)
+                                    <label class="form-check">
+                                        <input type="checkbox" name="hambatan_koperasi[]" value="{{ $hambatan }}" class="form-check-input">
+                                        <span class="form-check-label">{{ $hambatan }}</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <!-- Hambatan -->
-            <div class="border-t mt-4 pt-4">
-                <label class="form-label mb-3">Hambatan Utama Koperasi</label>
-                <div class="flex gap-3 flex-wrap">
-                    @foreach(['SDM', 'Modal', 'Kepercayaan', 'Pasar', 'Tata Kelola'] as $hambatan)
-                    <label class="form-check" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3);">
-                        <input type="checkbox" name="hambatan_koperasi[]" value="{{ $hambatan }}" class="form-check-input">
-                        <span class="form-check-label">{{ $hambatan }}</span>
-                    </label>
-                    @endforeach
+            <!-- Catatan & Rekomendasi -->
+            <div class="grid grid-cols-2 mt-4">
+                <div class="form-group">
+                    <label class="form-label font-semibold">Catatan:</label>
+                    <textarea name="catatan_a" rows="3" class="form-control" placeholder="Catatan..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label font-semibold">Rekomendasi:</label>
+                    <textarea name="rekomendasi_a" rows="3" class="form-control" placeholder="Rekomendasi..."></textarea>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bagian B: Sosial Ekonomi -->
-    <div class="section-card">
-        <div class="section-header">
-            <div class="section-icon success">B</div>
-            <h3 class="section-title">Sosial Ekonomi</h3>
-        </div>
-        <div class="section-body">
-            <div class="grid grid-cols-2">
-                <div class="form-group">
-                    <label class="form-label">Jumlah Pembudidaya Ikan</label>
-                    <input type="number" name="jumlah_pembudidaya" min="0" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Jumlah Pokdakan per Desa</label>
-                    <input type="number" name="jumlah_pokdakan" min="0" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Produksi Ikan (Kg/bulan)</label>
-                    <input type="number" name="produksi_ikan" min="0" step="0.01" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Konsumsi Ikan/Kapita (Kg)</label>
-                    <input type="number" name="konsumsi_perkapita" min="0" step="0.1" class="form-control">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bagian C: Pengamatan Lapangan -->
-    <div class="section-card">
-        <div class="section-header">
-            <div class="section-icon warning">C</div>
-            <h3 class="section-title">Pengamatan Lapangan - Progres</h3>
-        </div>
-        <div class="section-body">
-            @foreach([
-                ['name' => 'progres_bangunan', 'label' => 'Progres Bangunan/Shelter'],
-                ['name' => 'progres_kolam', 'label' => 'Progres Pemasangan Kolam'],
-                ['name' => 'progres_listrik', 'label' => 'Progres Instalasi Listrik'],
-                ['name' => 'progres_air', 'label' => 'Progres Saluran Air'],
-                ['name' => 'progres_aerasi', 'label' => 'Progres Saluran Aerasi'],
-            ] as $progress)
-            <div class="form-group p-4 bg-gray rounded-lg">
-                <div class="progress-label">
-                    <span>{{ $progress['label'] }}</span>
-                    <strong id="{{ $progress['name'] }}_value">50%</strong>
-                </div>
-                <input type="range" name="{{ $progress['name'] }}" min="0" max="100" value="50" 
-                    style="width:100%; accent-color:#0891B2;"
-                    oninput="document.getElementById('{{ $progress['name'] }}_value').textContent = this.value + '%'">
-            </div>
-            @endforeach
-        </div>
-    </div>
-
-    <!-- Submit -->
-    <div class="form-actions">
-        <a href="{{ route('kdmp.index') }}" class="btn btn-outline">Batal</a>
-        <button type="submit" class="btn btn-primary">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            Simpan Kuesioner
-        </button>
-    </div>
+    @include('kdmp._form_part2')
 </form>
 @endsection
-
-@push('scripts')
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-@endpush

@@ -1,19 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Breadcrumb -->
-<x-breadcrumb :items="[
-    ['label' => 'Manajemen User', 'url' => route('users.index')]
-]" />
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Manajemen User</h1>
+        <p class="page-subtitle">Kelola pengguna sistem</p>
+    </div>
+    <x-breadcrumb :items="[
+        ['label' => 'Users', 'url' => route('users.index')]
+    ]" />
+</div>
 
-<!-- Page Header -->
+<!-- Page Actions -->
 <div class="page-header">
     <div class="page-header-content">
-        <div>
-            <h1 class="page-title">Manajemen User</h1>
-            <p class="page-subtitle">Kelola pengguna sistem</p>
-        </div>
-        <a href="{{ route('users.create') }}" class="btn btn-primary">
+        <div></div>
+        <a href="{{ route('users.create') }}" class="btn btn-success">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -84,7 +87,7 @@
                     <td class="text-muted">{{ $user->created_at->format('d/m/Y') }}</td>
                     <td>
                         <div class="table-actions">
-                            <a href="{{ route('users.edit', $user) }}" class="table-action-btn edit" title="Edit">
+                            <a href="{{ route('users.edit', $user) }}" class="table-action-btn" style="color:#3B82F6;" title="Edit">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             </a>
                             @if($user->id !== auth()->id())

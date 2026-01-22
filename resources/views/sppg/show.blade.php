@@ -1,74 +1,135 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="py-12">
-    <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Detail Kuesioner SPPG</h1>
-                <p class="text-gray-600 dark:text-gray-400">{{ $sppg->nama_sppg ?? 'SPPG' }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('sppg.edit', $sppg) }}" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg">✏️ Edit</a>
-                <a href="{{ route('sppg.index') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">← Kembali</a>
-            </div>
-        </div>
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Detail Kuesioner SPPG</h1>
+        <p class="page-subtitle">{{ $sppg->nama_sppg ?? 'Data SPPG' }}</p>
+    </div>
+    <x-breadcrumb :items="[
+        ['label' => 'SPPG', 'url' => route('sppg.index')],
+        ['label' => 'Detail', 'url' => '#']
+    ]" />
+</div>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
-                <p class="text-sm text-blue-600 dark:text-blue-400">Jumlah Sekolah</p>
-                <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ $sppg->jumlah_sekolah ?? 0 }}</p>
-            </div>
-            <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 text-center">
-                <p class="text-sm text-green-600 dark:text-green-400">Total Kebutuhan Ikan</p>
-                <p class="text-2xl font-bold text-green-900 dark:text-green-100">{{ number_format($sppg->total_kebutuhan) }} Kg</p>
-            </div>
-            <div class="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
-                <p class="text-sm text-purple-600 dark:text-purple-400">Minat Kerjasama</p>
-                <p class="text-lg font-bold text-purple-900 dark:text-purple-100">{{ $sppg->is_interested ? '✅ Berminat' : '- Tidak' }}</p>
-            </div>
-        </div>
+<!-- Page Actions -->
+<div class="page-header">
+    <div class="page-header-content">
+        <a href="{{ route('sppg.index') }}" class="btn btn-outline">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Kembali
+        </a>
+        <a href="{{ route('sppg.edit', $sppg) }}" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            Edit
+        </a>
+    </div>
+</div>
 
-        <!-- Data -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Data SPPG</h3>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div><span class="text-gray-500">Nama SPPG:</span> {{ $sppg->nama_sppg ?? '-' }}</div>
-                <div><span class="text-gray-500">Kabupaten:</span> {{ $sppg->kabupaten ?? '-' }}</div>
-                <div><span class="text-gray-500">Jumlah Siswa:</span> {{ number_format($sppg->jumlah_siswa ?? 0) }}</div>
-                <div><span class="text-gray-500">Frekuensi Menu Ikan:</span> {{ $sppg->frekuensi_menu ?? '-' }} hari/minggu</div>
-            </div>
+<!-- Info Cards -->
+<div class="grid grid-cols-3 mb-5">
+    <div class="stat-card card-gradient-warning">
+        <div class="stat-card-content">
+            <h3>Jumlah Sekolah</h3>
+            <div class="stat-card-value">{{ $sppg->jumlah_sekolah ?? 0 }}</div>
         </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Kebutuhan Ikan</h3>
-            <div class="grid grid-cols-3 gap-4 text-sm">
-                <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <p class="text-gray-500">Lele</p>
-                    <p class="text-xl font-bold">{{ number_format($sppg->kebutuhan_lele ?? 0) }} Kg</p>
-                </div>
-                <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <p class="text-gray-500">Nila</p>
-                    <p class="text-xl font-bold">{{ number_format($sppg->kebutuhan_nila ?? 0) }} Kg</p>
-                </div>
-                <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <p class="text-gray-500">Lainnya</p>
-                    <p class="text-xl font-bold">{{ number_format($sppg->kebutuhan_lain ?? 0) }} Kg</p>
-                </div>
-            </div>
+    </div>
+    <div class="stat-card card-gradient-teal">
+        <div class="stat-card-content">
+            <h3>Jumlah Siswa</h3>
+            <div class="stat-card-value">{{ number_format($sppg->jumlah_siswa ?? 0) }}</div>
         </div>
+    </div>
+    <div class="stat-card card-gradient-success">
+        <div class="stat-card-content">
+            <h3>Total Kebutuhan</h3>
+            <div class="stat-card-value">{{ number_format(($sppg->kebutuhan_lele ?? 0) + ($sppg->kebutuhan_nila ?? 0)) }} Kg</div>
+        </div>
+    </div>
+</div>
 
+<!-- Data Sections -->
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon warning">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        </div>
+        <h3 class="section-title">Data Responden</h3>
+    </div>
+    <div class="section-body">
+        <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Verifikator</div><div class="detail-value">{{ $sppg->verifikator ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Nama Responden</div><div class="detail-value">{{ $sppg->responden ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Tanggal</div><div class="detail-value">{{ $sppg->tanggal?->format('d/m/Y') ?? '-' }}</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon teal">A</div>
+        <h3 class="section-title">Data SPPG & Kebutuhan</h3>
+    </div>
+    <div class="section-body">
+        <div class="detail-grid">
+            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Nama SPPG</div><div class="detail-value font-semibold">{{ $sppg->nama_sppg ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Kabupaten</div><div class="detail-value">{{ $sppg->kabupaten ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Provinsi</div><div class="detail-value">{{ $sppg->provinsi ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Jml Sekolah MBG</div><div class="detail-value">{{ $sppg->jumlah_sekolah ?? 0 }}</div></div>
+            <div class="detail-item"><div class="detail-label">Jml Siswa MBG</div><div class="detail-value">{{ number_format($sppg->jumlah_siswa ?? 0) }}</div></div>
+            <div class="detail-item"><div class="detail-label">Kebutuhan Lele</div><div class="detail-value">{{ number_format($sppg->kebutuhan_lele ?? 0) }} Kg/bulan</div></div>
+            <div class="detail-item"><div class="detail-label">Kebutuhan Nila</div><div class="detail-value">{{ number_format($sppg->kebutuhan_nila ?? 0) }} Kg/bulan</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon success">B</div>
+        <h3 class="section-title">Preferensi Ikan</h3>
+    </div>
+    <div class="section-body">
         @if($sppg->jenis_ikan_prioritas && count($sppg->jenis_ikan_prioritas) > 0)
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Preferensi</h3>
+        <div class="form-group">
+            <p class="form-label mb-3">Jenis Ikan Prioritas</p>
             <div class="flex flex-wrap gap-2">
                 @foreach($sppg->jenis_ikan_prioritas as $jenis)
-                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">{{ $jenis }}</span>
+                <span class="badge badge-teal">{{ $jenis }}</span>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        @if($sppg->standar_kualitas && count($sppg->standar_kualitas) > 0)
+        <div class="form-group">
+            <p class="form-label mb-3">Standar Kualitas</p>
+            <div class="flex flex-wrap gap-2">
+                @foreach($sppg->standar_kualitas as $kualitas)
+                <span class="badge badge-success">{{ $kualitas }}</span>
                 @endforeach
             </div>
         </div>
         @endif
     </div>
 </div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon navy">C</div>
+        <h3 class="section-title">Kerjasama</h3>
+    </div>
+    <div class="section-body">
+        <div class="detail-grid">
+            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Minat Kerjasama</div><div class="detail-value">{{ $sppg->minat_kerjasama ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Alasan</div><div class="detail-value">{{ $sppg->alasan_minat ?? '-' }}</div></div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush

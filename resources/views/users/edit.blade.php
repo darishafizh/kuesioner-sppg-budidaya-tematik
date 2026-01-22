@@ -1,25 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Breadcrumb -->
-<x-breadcrumb :items="[
-    ['label' => 'Manajemen User', 'url' => route('users.index')],
-    ['label' => 'Edit User', 'url' => '#']
-]" />
-
-<!-- Page Header -->
-<div class="page-header">
-    <div class="flex items-center">
-        <a href="{{ route('users.index') }}" class="back-btn">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-        </a>
-        <div>
-            <h1 class="page-title">Edit User</h1>
-            <p class="page-subtitle">{{ $user->name }}</p>
-        </div>
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Edit User</h1>
+        <p class="page-subtitle">{{ $user->name }}</p>
     </div>
+    <x-breadcrumb :items="[
+        ['label' => 'Users', 'url' => route('users.index')],
+        ['label' => 'Edit', 'url' => '#']
+    ]" />
 </div>
 
 <form action="{{ route('users.update', $user) }}" method="POST">

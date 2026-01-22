@@ -1,32 +1,31 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Breadcrumb -->
-<x-breadcrumb :items="[
-    ['label' => 'KDMP', 'url' => route('kdmp.index')],
-    ['label' => $kdmp->nama_koperasi ?? 'Detail', 'url' => '#']
-]" />
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Detail Kuesioner KDMP</h1>
+        <p class="page-subtitle">{{ $kdmp->nama_koperasi }}</p>
+    </div>
+    <x-breadcrumb :items="[
+        ['label' => 'KDMP', 'url' => route('kdmp.index')],
+        ['label' => 'Detail', 'url' => '#']
+    ]" />
+</div>
 
-<!-- Page Header -->
+<!-- Page Actions -->
 <div class="page-header">
     <div class="page-header-content">
-        <div class="flex items-center">
-            <a href="{{ route('kdmp.index') }}" class="back-btn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </a>
-            <div>
-                <h1 class="page-title">Detail Kuesioner KDMP</h1>
-                <p class="page-subtitle">{{ $kdmp->nama_koperasi }}</p>
-            </div>
-        </div>
-        <div class="flex gap-2">
-            <a href="{{ route('kdmp.edit', $kdmp) }}" class="btn btn-warning">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                Edit
-            </a>
-        </div>
+        <a href="{{ route('kdmp.index') }}" class="btn btn-outline">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Kembali
+        </a>
+        <a href="{{ route('kdmp.edit', $kdmp) }}" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            Edit
+        </a>
     </div>
 </div>
 

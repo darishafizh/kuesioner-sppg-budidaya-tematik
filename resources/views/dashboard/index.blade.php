@@ -1,17 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Breadcrumb -->
-<x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('dashboard')]]" />
-
-<!-- Page Header -->
-<div class="page-header">
-    <div class="page-header-content">
-        <div>
-            <h1 class="page-title">Dashboard Monitoring</h1>
-            <p class="page-subtitle">Visualisasi data kuesioner budidaya ikan tematik untuk SPPG</p>
-        </div>
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Dashboard Monitoring</h1>
+        <p class="page-subtitle">Visualisasi data kuesioner budidaya ikan tematik</p>
     </div>
+    <x-breadcrumb :items="[
+        ['label' => 'Dashboard', 'url' => route('dashboard')]
+    ]" />
 </div>
 
 <!-- Stats Cards -->
@@ -79,7 +77,7 @@
     <div class="card-body">
         <h2 class="card-title mb-4">Aksi Cepat</h2>
         <div class="flex gap-3 flex-wrap">
-            <a href="{{ route('kdmp.create') }}" class="btn btn-primary">
+            <a href="{{ route('kdmp.create') }}" class="btn btn-success">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -91,7 +89,7 @@
                 </svg>
                 Input Kuesioner Masyarakat
             </a>
-            <a href="{{ route('sppg.create') }}" class="btn btn-warning">
+            <a href="{{ route('sppg.create') }}" class="btn btn-success">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>

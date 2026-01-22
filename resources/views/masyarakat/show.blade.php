@@ -1,58 +1,107 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="py-12">
-    <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Detail Kuesioner Masyarakat</h1>
-                <p class="text-gray-600 dark:text-gray-400">{{ $masyarakat->responden ?? 'Responden' }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('masyarakat.edit', $masyarakat) }}" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg">✏️ Edit</a>
-                <a href="{{ route('masyarakat.index') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">← Kembali</a>
-            </div>
-        </div>
+<!-- Page Header with Breadcrumb -->
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Detail Kuesioner Masyarakat</h1>
+        <p class="page-subtitle">{{ $masyarakat->nama_responden ?? 'Data Responden' }}</p>
+    </div>
+    <x-breadcrumb :items="[
+        ['label' => 'Masyarakat', 'url' => route('masyarakat.index')],
+        ['label' => 'Detail', 'url' => '#']
+    ]" />
+</div>
 
-        <!-- Score Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
-                <p class="text-sm text-blue-600 dark:text-blue-400">Skor Keamanan</p>
-                <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ $masyarakat->safety_score ?? '-' }}/5</p>
-            </div>
-            <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 text-center">
-                <p class="text-sm text-green-600 dark:text-green-400">Skor Sosial-Ekonomi</p>
-                <p class="text-2xl font-bold text-green-900 dark:text-green-100">{{ $masyarakat->social_economic_score ?? '-' }}/5</p>
-            </div>
-            <div class="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
-                <p class="text-sm text-purple-600 dark:text-purple-400">Skor Penerimaan</p>
-                <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">{{ $masyarakat->acceptance_score ?? '-' }}/5</p>
-            </div>
-            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 text-center">
-                <p class="text-sm text-amber-600 dark:text-amber-400">Skor Total</p>
-                <p class="text-2xl font-bold text-amber-900 dark:text-amber-100">{{ $masyarakat->overall_score ?? '-' }}/5</p>
-            </div>
-        </div>
+<!-- Page Actions -->
+<div class="page-header">
+    <div class="page-header-content">
+        <a href="{{ route('masyarakat.index') }}" class="btn btn-outline">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Kembali
+        </a>
+        <a href="{{ route('masyarakat.edit', $masyarakat) }}" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            Edit
+        </a>
+    </div>
+</div>
 
-        <!-- Data -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Data Responden</h3>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div><span class="text-gray-500">Verifikator:</span> {{ $masyarakat->verifikator ?? '-' }}</div>
-                <div><span class="text-gray-500">Responden:</span> {{ $masyarakat->responden ?? '-' }}</div>
-                <div><span class="text-gray-500">Tempat:</span> {{ $masyarakat->tempat ?? '-' }}</div>
-                <div><span class="text-gray-500">Tanggal:</span> {{ $masyarakat->tanggal?->format('d/m/Y') ?? '-' }}</div>
-            </div>
+<!-- Data Sections -->
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon teal">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
         </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Tanggapan</h3>
-            <div class="space-y-4 text-sm">
-                <div><span class="text-gray-500">Kesesuaian:</span> {{ $masyarakat->sesuai_kebutuhan ?? '-' }}</div>
-                <div><span class="text-gray-500">Perasaan:</span> {{ $masyarakat->perasaan ?? '-' }}</div>
-                <div><span class="text-gray-500">Harapan:</span> {{ $masyarakat->harapan ?? '-' }}</div>
-            </div>
+        <h3 class="section-title">Data Responden</h3>
+    </div>
+    <div class="section-body">
+        <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Verifikator</div><div class="detail-value">{{ $masyarakat->verifikator ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Nama Responden</div><div class="detail-value">{{ $masyarakat->nama_responden ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Tempat</div><div class="detail-value">{{ $masyarakat->tempat ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Tanggal</div><div class="detail-value">{{ $masyarakat->tanggal?->format('d/m/Y') ?? '-' }}</div></div>
         </div>
     </div>
 </div>
+
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon success">A</div>
+        <h3 class="section-title">Tanggapan Masyarakat</h3>
+    </div>
+    <div class="section-body">
+        <div class="detail-grid">
+            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Sesuai Kebutuhan</div><div class="detail-value">{{ $masyarakat->sesuai_kebutuhan ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Perasaan</div><div class="detail-value">{{ $masyarakat->perasaan ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: span 4;"><div class="detail-label">Harapan</div><div class="detail-value">{{ $masyarakat->harapan ?? '-' }}</div></div>
+        </div>
+    </div>
+</div>
+
+@if($masyarakat->likert_q1 || $masyarakat->likert_q2)
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon navy">B</div>
+        <h3 class="section-title">Tingkat Kebahagiaan (Likert Scale)</h3>
+    </div>
+    <div class="section-body">
+        @php
+        $questions = [
+            1 => 'Saya merasa aman dengan kegiatan pembangunan',
+            2 => 'Pekerjaan fisik tidak mengganggu aktivitas',
+            3 => 'Lingkungan sekitar masih nyaman',
+            4 => 'Tidak khawatir terhadap dampak lingkungan',
+            5 => 'Kegiatan memperhatikan keselamatan',
+            6 => 'Berpotensi memberikan manfaat',
+            7 => 'Membuka peluang kerja/usaha',
+            8 => 'Mendorong kegiatan ekonomi lokal',
+            9 => 'Tidak menimbulkan konflik sosial',
+            10 => 'Berdampak positif bagi desa',
+        ];
+        @endphp
+        <div class="likert-container">
+            @foreach($questions as $num => $question)
+            @php $value = $masyarakat->{"likert_q$num"} ?? 0; @endphp
+            <div class="likert-item">
+                <p class="likert-question">{{ $num }}. {{ $question }}</p>
+                <div class="likert-options">
+                    @for($i = 1; $i <= 5; $i++)
+                    <div class="likert-option">
+                        <span style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;{{ $value == $i ? 'background:var(--kkp-teal);color:white;' : 'background:var(--gray-200);color:var(--gray-500);' }}">{{ $i }}</span>
+                    </div>
+                    @endfor
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
 @endsection
+
+@push('scripts')
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush
